@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Admin Dashboard')}">
+    <title>Admin Dashboard - Mall Management System</title>
+</head>
+<body class="bg-light">
+
+    <nav th:replace="~{layout/base :: navbar}"></nav>
+
+    <main class="container-fluid px-lg-5 py-4">
+
+        <!-- Top Header & Mall Info -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between pb-3 mb-4 border-bottom gap-2">
+            <div>
+                <h2 class="h3 fw-bold text-dark mb-1">
+                    <i class="bi bi-speedometer2 text-primary me-2"></i>Executive Administration Portal
+                </h2>
+                <p class="text-muted mb-0">
+                    <span class="fw-semibold" th:text="${mall.mallName}">Nexus Grand Galleria Mall</span> &bull; 
+                    <span th:text="${mall.city}">Metropolis City</span> &bull; 
+                    <span class="badge bg-secondary-subtle text-secondary" th:text="${mall.totalFloors + ' Floors, ' + mall.totalUnits + ' Total Units'}">5 Floors, 60 Units</span>
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTenantModal">
+                    <i class="bi bi-plus-circle me-1"></i> Register New Tenant
+                </button>
+                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#assignOfficerModal">
+                    <i class="bi bi-person-badge me-1"></i> Assign Officer
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert notifications -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Operation successful!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${errorMessage}">Error processing request.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- 4 Metric Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-3">
+                <div class="metric-card primary">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-bold">Total Commercial Units</span>
+                            <h3 class="fw-bold mt-2 mb-0" th:text="${totalShops}">60</h3>
+                            <span class="badge bg-primary-subtle text-primary mt-2">Capacity Target</span>
+                        </div>
+                        <div class="metric-icon-wrap bg-primary-subtle text-primary">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="metric-card success">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-bold">Occupied Units</span>
+                            <h3 class="fw-bold mt-2 mb-0 text-success" th:text="${occupiedShops}">2</h3>
+                            <span class="badge bg-success-subtle text-success mt-2" th:text="${occupancyRate + '% Occupancy'}">3.3% Occupancy</span>
+                        </div>
+                        <div class="metric-icon-wrap bg-success-subtle text-success">
+                            <i class="bi bi-shop-window"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="metric-card warning">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-bold">Vacant Units</span>
+                            <h3 class="fw-bold mt-2 mb-0 text-warning" th:text="${vacantUnits}">58</h3>
+                            <span class="badge bg-warning-subtle text-warning mt-2">Available for Lease</span>
+                        </div>
+                        <div class="metric-icon-wrap bg-warning-subtle text-warning">
+                            <i class="bi bi-door-open-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3">
+                <div class="metric-card accent">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-bold">Monthly Revenue</span>
+                            <h3 class="fw-bold mt-2 mb-0 text-primary" th:text="${'$' + #numbers.formatDecimal(totalMonthlyRevenue, 1, 'COMMA', 2, 'POINT')}">$21,000.00</h3>
+                            <span class="badge bg-info-subtle text-info mt-2">Active Lease Value</span>
+                        </div>
+                        <div class="metric-icon-wrap bg-info-subtle text-primary">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="row g-4">
+            
+            <!-- Left Column: Tenant Management -->
+            <div class="col-xl-8">
+                <div class="card-panel">
+                    <div class="card-panel-header">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">Tenant Directory &amp; Leases</h5>
+                            <small class="text-muted">Manage store allocations, lease validity, and rental contracts</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <!-- Filter by category form -->
+                            <form th:action="@{/admin/dashboard}" method="get" class="d-flex gap-2">
+                                <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="" th:selected="${selectedCategory == null or selectedCategory == ''}">All Categories</option>
+                                    <option value="Fashion & Apparel" th:selected="${selectedCategory == 'Fashion & Apparel'}">Fashion & Apparel</option>
+                                    <option value="Electronics" th:selected="${selectedCategory == 'Electronics'}">Electronics</option>
+                                    <option value="Food & Dining" th:selected="${selectedCategory == 'Food & Dining'}">Food & Dining</option>
+                                    <option value="Jewelry & Watches" th:selected="${selectedCategory == 'Jewelry & Watches'}">Jewelry & Watches</option>
+                                    <option value="Entertainment" th:selected="${selectedCategory == 'Entertainment'}">Entertainment</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Unit #</th>
+                                    <th>Business Name</th>
+                                    <th>Category</th>
+                                    <th>Monthly Rent</th>
+                                    <th>Lease Period</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tenant : ${tenants}">
+                                    <td>
+                                        <span class="fw-bold font-monospace text-primary" th:text="${tenant.shopNumber}">Shop 101</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark" th:text="${tenant.businessName}">Zara Premier Outlet</div>
+                                        <small class="text-muted" th:text="${tenant.user.fullName + ' (' + tenant.user.email + ')'}">Elena Rostova</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-secondary border" th:text="${tenant.category}">Fashion</span>
+                                    </td>
+                                    <td class="fw-bold" th:text="${'$' + #numbers.formatDecimal(tenant.monthlyRent, 1, 'COMMA', 2, 'POINT')}">$8,500.00</td>
+                                    <td>
+                                        <small class="d-block text-secondary" th:text="${tenant.leaseStart + ' to ' + tenant.leaseEnd}">2024-01-01 to 2027-12-31</small>
+                                    </td>
+                                    <td>
+                                        <span th:if="${tenant.status.name() == 'ACTIVE'}" class="badge-status-active">ACTIVE</span>
+                                        <span th:if="${tenant.status.name() == 'INACTIVE'}" class="badge-status-inactive">INACTIVE</span>
+                                        <span th:if="${tenant.status.name() == 'TERMINATED'}" class="badge-status-terminated">TERMINATED</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-secondary" 
+                                                    th:data-id="${tenant.id}"
+                                                    th:data-business="${tenant.businessName}"
+                                                    th:data-category="${tenant.category}"
+                                                    th:data-rent="${tenant.monthlyRent}"
+                                                    th:data-status="${tenant.status}"
+                                                    onclick="populateEditModal(this)">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <form th:action="@{'/admin/tenants/delete/' + ${tenant.id}}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this tenant?')">
+                                                <button type="submit" class="btn btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(tenants)}">
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                        No tenants match the current filter criteria.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Officer Floor Assignments & Overview -->
+            <div class="col-xl-4">
+                <div class="card-panel mb-4">
+                    <div class="card-panel-header">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">Floor Supervisory Officers</h5>
+                            <small class="text-muted">Staff assigned to floor safety &amp; inspections</small>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div class="list-group list-group-flush">
+                            <div th:each="officer : ${officers}" class="list-group-item px-0 py-3 border-bottom">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="fw-bold text-dark" th:text="${officer.user.fullName}">Marcus Sterling</div>
+                                    <span class="badge bg-primary px-2 py-1">
+                                        <i class="bi bi-layers-fill me-1"></i> Floor <span th:text="${officer.assignedFloor}">2</span>
+                                    </span>
+                                </div>
+                                <div class="small text-muted mb-1">
+                                    <i class="bi bi-building-gear me-1"></i> <span th:text="${officer.department}">Operations</span> &bull; 
+                                    <i class="bi bi-telephone me-1"></i> <span th:text="${officer.phone}">+1 (555) 234-8901</span>
+                                </div>
+                                <small class="text-secondary font-monospace" th:text="${'Username: ' + officer.user.username}">officer1</small>
+                            </div>
+                            <div th:if="${#lists.isEmpty(officers)}" class="text-center py-3 text-muted">
+                                No officers assigned yet.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Mall Invoices / Billing Overview -->
+                <div class="card-panel">
+                    <div class="card-panel-header">
+                        <h5 class="fw-bold mb-0 text-dark">Recent Invoices</h5>
+                        <span class="badge bg-light text-muted border">Billing Ledger</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="list-group list-group-flush">
+                            <div th:each="bill : ${recentBills}" class="list-group-item px-0 py-2 d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="fw-semibold small text-dark" th:text="${bill.tenant.businessName}">Zara</div>
+                                    <small class="text-muted" th:text="${bill.billingMonth}">November 2026</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold small" th:text="${'$' + #numbers.formatDecimal(bill.amountDue, 1, 'COMMA', 2, 'POINT')}">$8,500</div>
+                                    <span th:if="${bill.status.name() == 'PAID'}" class="badge-bill-paid">PAID</span>
+                                    <span th:if="${bill.status.name() == 'PENDING'}" class="badge-bill-pending">PENDING</span>
+                                    <span th:if="${bill.status.name() == 'OVERDUE'}" class="badge-bill-overdue">OVERDUE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: Register New Tenant -->
+    <div class="modal fade" id="addTenantModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form th:action="@{/admin/tenants/add}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-shop me-2 text-primary"></i>Register New Commercial Tenant</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Login Username</label>
+                                <input type="text" name="username" class="form-control" placeholder="e.g. nike_store" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Default Password</label>
+                                <input type="password" name="password" class="form-control" value="tenant123" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Store Manager / Contact Person</label>
+                                <input type="text" name="fullName" class="form-control" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Contact Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="store@brand.com" required>
+                            </div>
+                            <hr class="my-2">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Shop / Unit Number</label>
+                                <input type="text" name="shopNumber" class="form-control" placeholder="e.g. Shop 305" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Business / Brand Name</label>
+                                <input type="text" name="businessName" class="form-control" placeholder="e.g. Nike Athletic Goods" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Category</label>
+                                <select name="category" class="form-select" required>
+                                    <option value="Fashion & Apparel">Fashion & Apparel</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Food & Dining">Food & Dining</option>
+                                    <option value="Jewelry & Watches">Jewelry & Watches</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Monthly Rent ($ USD)</label>
+                                <input type="number" step="0.01" name="monthlyRent" class="form-control" placeholder="e.g. 9500.00" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Lease Start Date</label>
+                                <input type="date" name="leaseStart" class="form-control" value="2026-01-01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Lease End Date</label>
+                                <input type="date" name="leaseEnd" class="form-control" value="2028-12-31" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary fw-bold">Save Tenant</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Tenant -->
+    <div class="modal fade" id="editTenantModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/tenants/edit}" method="post" id="editTenantForm">
+                    <input type="hidden" name="id" id="editTenantId">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-primary"></i>Update Tenant Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Business Name</label>
+                            <input type="text" name="businessName" id="editBusinessName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Category</label>
+                            <select name="category" id="editCategory" class="form-select" required>
+                                <option value="Fashion & Apparel">Fashion & Apparel</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Food & Dining">Food & Dining</option>
+                                <option value="Jewelry & Watches">Jewelry & Watches</option>
+                                <option value="Entertainment">Entertainment</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Monthly Rent ($)</label>
+                            <input type="number" step="0.01" name="monthlyRent" id="editMonthlyRent" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Lease Status</label>
+                            <select name="status" id="editStatus" class="form-select" required>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">INACTIVE</option>
+                                <option value="TERMINATED">TERMINATED</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary fw-bold">Update Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Assign / Add Officer -->
+    <div class="modal fade" id="assignOfficerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/officers/assign}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-person-badge me-2 text-primary"></i>Assign Floor Supervisory Officer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Officer Account Username</label>
+                            <input type="text" name="username" class="form-control" placeholder="e.g. officer2" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Officer Full Name</label>
+                            <input type="text" name="fullName" class="form-control" placeholder="e.g. Sarah Jenkins" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="officer@nexusmall.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Department</label>
+                            <input type="text" name="department" class="form-control" value="Operations & Safety" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Assigned Floor Number</label>
+                            <input type="number" min="1" max="5" name="assignedFloor" class="form-control" value="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Emergency Contact Phone</label>
+                            <input type="text" name="phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-dark fw-bold">Assign Officer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+
+    <script>
+        function populateEditModal(btn) {
+            document.getElementById('editTenantId').value = btn.getAttribute('data-id');
+            document.getElementById('editBusinessName').value = btn.getAttribute('data-business');
+            document.getElementById('editCategory').value = btn.getAttribute('data-category');
+            document.getElementById('editMonthlyRent').value = btn.getAttribute('data-rent');
+            document.getElementById('editStatus').value = btn.getAttribute('data-status');
+            
+            var editModal = new bootstrap.Modal(document.getElementById('editTenantModal'));
+            editModal.show();
+        }
+    </script>
+
+</body>
+</html>

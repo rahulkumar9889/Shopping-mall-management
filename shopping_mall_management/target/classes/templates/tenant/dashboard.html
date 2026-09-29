@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Tenant Portal')}">
+    <title>Tenant Dashboard - Shopping Mall Management System</title>
+</head>
+<body class="bg-light">
+
+    <nav th:replace="~{layout/base :: navbar}"></nav>
+
+    <main class="container-fluid px-lg-5 py-4">
+
+        <!-- Tenant Header -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between pb-3 mb-4 border-bottom gap-2">
+            <div>
+                <div class="d-flex align-items-center gap-3">
+                    <h2 class="h3 fw-bold text-dark mb-0" th:text="${tenant.businessName}">Zara Premier Outlet</h2>
+                    <span class="badge bg-primary px-3 py-2 font-monospace fs-6" th:text="${tenant.shopNumber}">Shop 101</span>
+                </div>
+                <p class="text-muted mb-0 mt-1">
+                    Store Manager: <strong class="text-dark" th:text="${tenant.user.fullName}">Elena Rostova</strong> &bull; 
+                    Email: <span th:text="${tenant.user.email}">contact@zarafashion.com</span> &bull; 
+                    Category: <span class="badge bg-light text-secondary border" th:text="${tenant.category}">Fashion & Apparel</span>
+                </p>
+            </div>
+            <div>
+                <span th:if="${tenant.status.name() == 'ACTIVE'}" class="badge-status-active px-3 py-2 fs-6">
+                    <i class="bi bi-patch-check-fill me-1"></i> LEASE ACTIVE
+                </span>
+                <span th:if="${tenant.status.name() == 'INACTIVE'}" class="badge-status-inactive px-3 py-2 fs-6">
+                    <i class="bi bi-pause-circle me-1"></i> LEASE SUSPENDED
+                </span>
+            </div>
+        </div>
+
+        <!-- Alert messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Payment confirmed successfully!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4 mb-4">
+            
+            <!-- Commercial Lease Details Card -->
+            <div class="col-lg-4">
+                <div class="card-panel h-100">
+                    <div class="card-panel-header">
+                        <h5 class="fw-bold mb-0 text-dark">Commercial Lease Agreement</h5>
+                        <i class="bi bi-file-earmark-text text-primary fs-5"></i>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-3 pb-3 border-bottom">
+                            <span class="text-muted small d-block">Monthly Base Rental</span>
+                            <span class="fs-3 fw-bold text-primary" th:text="${'$' + #numbers.formatDecimal(tenant.monthlyRent, 1, 'COMMA', 2, 'POINT')}">$8,500.00</span>
+                            <span class="text-muted small"> / month</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-muted small d-block">Lease Term Commencement</span>
+                            <span class="fw-semibold text-dark" th:text="${tenant.leaseStart}">2024-01-01</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-muted small d-block">Lease Expiration Date</span>
+                            <span class="fw-semibold text-dark" th:text="${tenant.leaseEnd}">2027-12-31</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <span class="text-muted small d-block">Allocated Commercial Unit</span>
+                            <span class="fw-bold font-monospace text-dark" th:text="${tenant.shopNumber}">Shop 101</span>
+                        </div>
+
+                        <div class="alert alert-info py-2 px-3 small mb-0 mt-4">
+                            <i class="bi bi-info-circle-fill me-1"></i> Utilities and mall HVAC fees are consolidated within your monthly invoices.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing & Rental Invoices Ledger -->
+            <div class="col-lg-8">
+                <div class="card-panel h-100">
+                    <div class="card-panel-header">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">Rental &amp; Service Invoices</h5>
+                            <small class="text-muted">Direct online payment processing and payment receipts</small>
+                        </div>
+                        <span class="badge bg-light text-muted border">Financial Ledger</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Billing Month</th>
+                                    <th>Amount Due</th>
+                                    <th>Status</th>
+                                    <th>Payment Date</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="bill : ${bills}">
+                                    <td>
+                                        <span class="font-monospace text-muted" th:text="${'INV-' + bill.id}">INV-1</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-dark" th:text="${bill.billingMonth}">November 2026</strong>
+                                    </td>
+                                    <td class="fw-bold" th:text="${'$' + #numbers.formatDecimal(bill.amountDue, 1, 'COMMA', 2, 'POINT')}">$8,500.00</td>
+                                    <td>
+                                        <span th:if="${bill.status.name() == 'PAID'}" class="badge-bill-paid">
+                                            <i class="bi bi-check-circle-fill me-1"></i> PAID
+                                        </span>
+                                        <span th:if="${bill.status.name() == 'PENDING'}" class="badge-bill-pending">
+                                            <i class="bi bi-hourglass-split me-1"></i> PENDING
+                                        </span>
+                                        <span th:if="${bill.status.name() == 'OVERDUE'}" class="badge-bill-overdue">
+                                            <i class="bi bi-exclamation-octagon-fill me-1"></i> OVERDUE
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${bill.paymentDate != null}" class="text-muted small" th:text="${bill.paymentDate}">2026-10-02</span>
+                                        <span th:if="${bill.paymentDate == null}" class="text-muted small">&mdash;</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <!-- If unpaid, show interactive Pay Rent button -->
+                                        <form th:if="${bill.status.name() != 'PAID'}" th:action="@{'/tenant/pay-rent/' + ${bill.id}}" method="post">
+                                            <button type="submit" class="btn btn-success btn-sm fw-semibold shadow-sm px-3">
+                                                <i class="bi bi-credit-card me-1"></i> Pay Rent Now
+                                            </button>
+                                        </form>
+                                        <!-- If paid, show receipt download button -->
+                                        <button th:if="${bill.status.name() == 'PAID'}" type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('Receipt downloaded: Tax Invoice #INV-' + this.getAttribute('data-bill-id'))" th:data-bill-id="${bill.id}">
+                                            <i class="bi bi-receipt me-1"></i> Receipt
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(bills)}">
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        No billing statements found.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+
+</body>
+</html>
