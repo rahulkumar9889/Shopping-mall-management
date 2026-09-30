@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Grand Galleria - Metropolis Premier Shopping &amp; Lifestyle Destination</title>
+    <meta name="description" content="Explore 5 architectural levels featuring 60 international flagship boutiques, Michelin-calibre dining, and curated cultural experiences in Metropolis.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom Modern Stylesheet with Cache Buster -->
+    <link rel="stylesheet" th:href="@{/css/style.css(v='1.1')}" href="/css/style.css?v=1.1">
+    <style>
+        :root {
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --mall-gold: #d97706;
+            --mall-gold-light: #fbbf24;
+            --mall-dark: #020617;
+            --mall-card: #0f172a;
+        }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--mall-dark);
+            color: #cbd5e1;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .font-serif { font-family: var(--font-serif); }
+        .font-mono { font-family: var(--font-mono); }
+        .text-gold { color: var(--mall-gold-light) !important; }
+        .bg-gold { background-color: var(--mall-gold) !important; color: #020617 !important; }
+        .bg-gold:hover { background-color: var(--mall-gold-light) !important; }
+        .border-gold { border-color: rgba(217, 119, 6, 0.4) !important; }
+        
+        /* Sticky Top Header */
+        .mall-header {
+            background-color: rgba(2, 6, 23, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .nav-link {
+            color: #94a3b8 !important;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--mall-gold-light) !important;
+        }
+
+        /* Hero */
+        .hero-banner {
+            position: relative;
+            min-height: 580px;
+            background: linear-gradient(to right, rgba(2,6,23,0.92), rgba(2,6,23,0.75)), 
+                        url('https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?auto=format&fit=crop&w=2000&q=85') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Card stylings */
+        .mall-card {
+            background-color: var(--mall-card);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .mall-card:hover {
+            border-color: rgba(217, 119, 6, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .filter-btn {
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            padding: 0.45rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0f172a;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--mall-gold);
+            color: #020617;
+            border-color: var(--mall-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. TOP ANNOUNCEMENT TICKER -->
+    <div class="py-1 px-3 text-center border-bottom border-secondary border-opacity-25" style="background: linear-gradient(90deg, #451a03, #0f172a, #451a03); font-size: 0.72rem; color: #fde68a;">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <div class="d-none d-md-flex gap-3 text-secondary">
+                <span><i class="bi bi-clock text-warning me-1"></i> Today's Hours: <strong class="text-light">10:00 AM – 10:00 PM</strong></span>
+                <span><i class="bi bi-geo-alt text-warning me-1"></i> Metropolis Grand Galleria</span>
+            </div>
+            <div>
+                <i class="bi bi-stars text-warning me-1"></i> Autumn Fashion Week Gala &bull; Oct 12–14 &bull; VIP Privileges Open
+            </div>
+            <div>
+                <a th:href="@{/login}" class="text-warning text-decoration-none fw-bold">
+                    <i class="bi bi-lock-fill me-1"></i> Staff &amp; Tenant Portal
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ELEGANT LUXURY NAVIGATION BAR -->
+    <header class="sticky-top mall-header">
+        <div class="container py-3 d-flex align-items-center justify-content-between">
+            <a th:href="@{/}" class="d-flex align-items-center gap-2 text-decoration-none text-light">
+                <div class="rounded-3 bg-gold p-2 d-flex align-items-center justify-content-center shadow">
+                    <i class="bi bi-buildings-fill fs-4 text-dark"></i>
+                </div>
+                <div>
+                    <span class="font-serif fw-bold fs-5 tracking-widest text-uppercase d-block" th:text="${mall != null ? mall.mallName : 'NEXUS GRAND GALLERIA'}">NEXUS GRAND GALLERIA</span>
+                    <span class="text-gold font-mono text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.15em;">Metropolis Premier Flagship</span>
+                </div>
+            </a>
+
+            <nav class="d-none d-lg-flex gap-4">
+                <a href="#directory" class="nav-link">Store Directory</a>
+                <a href="#featured" class="nav-link">Flagships</a>
+                <a href="#dining" class="nav-link">Dining</a>
+                <a href="#map" class="nav-link">Floor Map</a>
+                <a href="#events" class="nav-link">Events</a>
+                <a href="#offers" class="nav-link">Offers</a>
+                <a href="#amenities" class="nav-link">Amenities</a>
+            </nav>
+
+            <div class="d-flex align-items-center gap-2">
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-warning btn-sm fw-bold px-3 py-2 rounded-3">
+                        <i class="bi bi-speedometer2 me-1"></i> Admin Portal
+                    </a>
+                    <a th:href="@{/officer/dashboard}" sec:authorize="hasRole('ROLE_OFFICER')" class="btn btn-warning btn-sm fw-bold px-3 py-2 rounded-3">
+                        <i class="bi bi-shield-check me-1"></i> Officer Portal
+                    </a>
+                    <a th:href="@{/tenant/dashboard}" sec:authorize="hasRole('ROLE_TENANT')" class="btn btn-warning btn-sm fw-bold px-3 py-2 rounded-3">
+                        <i class="bi bi-shop me-1"></i> Tenant Portal
+                    </a>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn bg-gold btn-sm fw-bold px-3 py-2 rounded-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                        <i class="bi bi-lock-fill me-1"></i> Portal Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. CINEMATIC HERO SECTION -->
+    <section class="hero-banner py-5">
+        <div class="container py-5">
+            <div class="col-lg-8">
+                <div class="text-gold text-uppercase fw-bold mb-2 font-mono" style="font-size: 0.75rem; letter-spacing: 0.2em;">
+                    <span class="d-inline-block bg-warning me-2" style="width: 25px; height: 1px; vertical-align: middle;"></span>
+                    Metropolis Landmark &bull; 5 Architectural Levels
+                </div>
+                <h1 class="display-4 font-serif fw-bold text-white mb-3">
+                    Where Luxury Meets Architecture &amp; Culture.
+                </h1>
+                <p class="lead text-slate-300 mb-4 fw-light" style="color: #cbd5e1; max-width: 650px;">
+                    Immerse yourself in over 60 international luxury houses, curated designer boutiques, rooftop culinary destinations, and contemporary lifestyle spectacles.
+                </p>
+
+                <!-- Search Input Bar -->
+                <div class="p-1 rounded-3 border border-secondary border-opacity-50 mb-4 bg-dark bg-opacity-75 shadow-lg d-flex align-items-center" style="max-width: 540px;">
+                    <i class="bi bi-search text-warning ms-3 me-2"></i>
+                    <input type="text" id="storeSearchInput" class="form-control bg-transparent border-0 text-white shadow-none small" placeholder="Search 60+ boutiques, dining, or brands (e.g. Zara, Apple, Rolex)...">
+                    <a href="#directory" class="btn bg-gold btn-sm fw-bold px-3 py-2 rounded-2 text-uppercase" style="font-size: 0.72rem;">Explore</a>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#directory" class="btn btn-light fw-bold px-4 py-2 rounded-3 text-uppercase" style="font-size: 0.75rem;">
+                        <i class="bi bi-bag-fill text-warning me-1"></i> Browse Stores
+                    </a>
+                    <a href="#map" class="btn btn-outline-light fw-semibold px-4 py-2 rounded-3 text-uppercase" style="font-size: 0.75rem;">
+                        <i class="bi bi-compass me-1 text-warning"></i> Interactive Map
+                    </a>
+                    <a th:href="@{/login}" class="btn btn-outline-warning fw-semibold px-4 py-2 rounded-3 text-uppercase" style="font-size: 0.75rem;">
+                        <i class="bi bi-shield-lock me-1"></i> Staff / Tenant Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. MALL METRICS STRIP -->
+    <div class="border-top border-bottom border-secondary border-opacity-25 py-3" style="background-color: #020617;">
+        <div class="container">
+            <div class="row text-center divide-x">
+                <div class="col-6 col-md-3 py-2">
+                    <h3 class="font-serif fw-bold text-white mb-0" th:text="${mall != null ? mall.totalFloors : '5'}">5</h3>
+                    <small class="text-secondary text-uppercase font-mono" style="font-size: 0.68rem;">Architectural Levels</small>
+                </div>
+                <div class="col-6 col-md-3 py-2">
+                    <h3 class="font-serif fw-bold text-gold mb-0" th:text="${totalShops != null ? totalShops : '60'}">60</h3>
+                    <small class="text-secondary text-uppercase font-mono" style="font-size: 0.68rem;">Commercial Boutiques</small>
+                </div>
+                <div class="col-6 col-md-3 py-2">
+                    <h3 class="font-serif fw-bold text-white mb-0">18</h3>
+                    <small class="text-secondary text-uppercase font-mono" style="font-size: 0.68rem;">Gourmet &amp; Dining</small>
+                </div>
+                <div class="col-6 col-md-3 py-2">
+                    <h3 class="font-serif fw-bold text-gold mb-0">1,200</h3>
+                    <small class="text-secondary text-uppercase font-mono" style="font-size: 0.68rem;">Covered &amp; EV Bays</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. FEATURED LUXURY BOUTIQUES -->
+    <section id="featured" class="py-5" style="background-color: #090d16;">
+        <div class="container py-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem;">Curated Excellence</span>
+                    <h2 class="font-serif fw-bold text-white mb-1">Flagship Luxury &amp; Retail Anchors</h2>
+                </div>
+                <p class="text-secondary small mb-0" style="max-width: 450px;">
+                    Home to premier fashion houses, innovative tech creators, and certified horology salons.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="mall-card overflow-hidden h-100 d-flex flex-column">
+                        <div class="position-relative" style="height: 220px;">
+                            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80" alt="Zara Premier Outlet" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-dark bg-opacity-75 border border-secondary text-gold font-mono small">
+                                Floor 1 &bull; Shop 101
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column justify-content-between flex-grow-1">
+                            <div>
+                                <small class="text-secondary text-uppercase font-mono fw-bold">Fashion &amp; Apparel</small>
+                                <h4 class="font-serif fw-bold text-white mt-1">Zara Premier Outlet</h4>
+                                <p class="text-secondary small mt-2">Exclusive multi-level flagship featuring contemporary runway collections and sustainable eco-fabrics.</p>
+                            </div>
+                            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small font-mono"><i class="bi bi-clock me-1"></i> 10:00 AM – 10:00 PM</span>
+                                <span class="text-gold fw-bold small">Explore Boutique &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mall-card overflow-hidden h-100 d-flex flex-column">
+                        <div class="position-relative" style="height: 220px;">
+                            <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=800&q=80" alt="Apple Authorized Reseller" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-dark bg-opacity-75 border border-secondary text-gold font-mono small">
+                                Floor 2 &bull; Shop 204
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column justify-content-between flex-grow-1">
+                            <div>
+                                <small class="text-secondary text-uppercase font-mono fw-bold">Tech &amp; Electronics</small>
+                                <h4 class="font-serif fw-bold text-white mt-1">Apple Authorized Reseller</h4>
+                                <p class="text-secondary small mt-2">Full experience retail store with hands-on demo stations, certified Genius support, and device personalization.</p>
+                            </div>
+                            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small font-mono"><i class="bi bi-clock me-1"></i> 10:00 AM – 10:00 PM</span>
+                                <span class="text-gold fw-bold small">Explore Boutique &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mall-card overflow-hidden h-100 d-flex flex-column">
+                        <div class="position-relative" style="height: 220px;">
+                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="The Glasshouse Bistro" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-dark bg-opacity-75 border border-secondary text-gold font-mono small">
+                                Floor 5 &bull; Shop 501
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column justify-content-between flex-grow-1">
+                            <div>
+                                <small class="text-secondary text-uppercase font-mono fw-bold">Dining &amp; Gourmet</small>
+                                <h4 class="font-serif fw-bold text-white mt-1">The Glasshouse Bistro</h4>
+                                <p class="text-secondary small mt-2">Panoramic rooftop dining featuring Mediterranean gastronomy, sommelier-curated organic wines, and live jazz.</p>
+                            </div>
+                            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small font-mono"><i class="bi bi-clock me-1"></i> 11:30 AM – 11:00 PM</span>
+                                <span class="text-gold fw-bold small">Explore Boutique &rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. COMPLETE STORE DIRECTORY -->
+    <section id="directory" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem;">Directory</span>
+                <h2 class="font-serif fw-bold text-white">Explore All Boutiques &amp; Salons</h2>
+                <p class="text-secondary small">Filter by category or search by store name to find your destination across our 5 levels.</p>
+                
+                <!-- Category Filter Buttons -->
+                <div class="d-flex flex-wrap justify-content-center gap-2 mt-4" id="categoryFilterBar">
+                    <button class="filter-btn active" data-filter="all">All Stores</button>
+                    <button class="filter-btn" data-filter="fashion">Fashion &amp; Luxury</button>
+                    <button class="filter-btn" data-filter="tech">Tech &amp; Electronics</button>
+                    <button class="filter-btn" data-filter="dining">Dining &amp; Gourmet</button>
+                    <button class="filter-btn" data-filter="beauty">Beauty &amp; Watches</button>
+                </div>
+            </div>
+
+            <!-- Stores Grid -->
+            <div class="row g-4" id="storeDirectoryGrid">
+                <!-- Shop 101: Zara -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="fashion" data-name="zara premier outlet">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 1 &bull; Shop 101</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">Zara Premier Outlet</h5>
+                        <p class="text-secondary small mb-3">Contemporary runway collections, tailored menswear, and women's luxury apparel.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 301-4490</span>
+                            <span class="text-gold">Fashion</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop 204: Apple -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="tech" data-name="apple authorized reseller">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 2 &bull; Shop 204</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">Apple Authorized Reseller</h5>
+                        <p class="text-secondary small mb-3">Certified devices, Genius diagnostics, customized configuration, and official trade-ins.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 204-8800</span>
+                            <span class="text-gold">Electronics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop 105: Gucci -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="fashion" data-name="gucci flagship boutique">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 1 &bull; Shop 105</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">Gucci Flagship Boutique</h5>
+                        <p class="text-secondary small mb-3">Haute couture fashion, signature Italian leather handbags, and bespoke private styling.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 105-7722</span>
+                            <span class="text-gold">Luxury</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop 108: Rolex -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="beauty" data-name="rolex horology fine watches">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 1 &bull; Shop 108</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">Rolex &amp; Fine Horology</h5>
+                        <p class="text-secondary small mb-3">Authorized chronometer salon with certified Swiss watchmakers and rare collector dials.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 108-9900</span>
+                            <span class="text-gold">Watches</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop 501: Glasshouse -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="dining" data-name="the glasshouse rooftop bistro">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 5 &bull; Shop 501</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">The Glasshouse Bistro</h5>
+                        <p class="text-secondary small mb-3">Wood-fired culinary creations, panoramic city vistas, and weekend sunset tasting flights.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 501-9988</span>
+                            <span class="text-gold">Dining</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop 112: Sephora -->
+                <div class="col-sm-6 col-lg-4 store-card-item" data-category="beauty" data-name="sephora beauty lounge cosmetics">
+                    <div class="mall-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary bg-opacity-25 text-gold font-mono small">Level 1 &bull; Shop 112</span>
+                            <span class="text-success small fw-semibold font-mono"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                        </div>
+                        <h5 class="fw-bold text-white">Sephora Beauty Lounge</h5>
+                        <p class="text-secondary small mb-3">Global cosmetics studio, custom fragrance blending bar, and complimentary masterclasses.</p>
+                        <div class="d-flex justify-content-between text-secondary small font-mono border-top border-secondary border-opacity-25 pt-2">
+                            <span><i class="bi bi-telephone me-1"></i> +1 (555) 112-3344</span>
+                            <span class="text-gold">Beauty</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. INTERACTIVE MULTI-LEVEL MALL MAP -->
+    <section id="map" class="py-5" style="background-color: #090d16;">
+        <div class="container py-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem;">Wayfinding &amp; Floorplans</span>
+                    <h2 class="font-serif fw-bold text-white mb-1">Interactive Multi-Level Mall Map</h2>
+                    <p class="text-secondary small mb-0">Select any architectural floor level to inspect boutique unit distribution.</p>
+                </div>
+                <!-- Floor selector -->
+                <div class="btn-group bg-dark p-1 rounded-3 border border-secondary border-opacity-25">
+                    <button class="btn btn-warning btn-sm fw-bold px-3 py-2 floor-tab active" data-floor="1">Floor 1</button>
+                    <button class="btn btn-outline-secondary btn-sm text-light px-3 py-2 floor-tab" data-floor="2">Floor 2</button>
+                    <button class="btn btn-outline-secondary btn-sm text-light px-3 py-2 floor-tab" data-floor="3">Floor 3</button>
+                    <button class="btn btn-outline-secondary btn-sm text-light px-3 py-2 floor-tab" data-floor="4">Floor 4</button>
+                    <button class="btn btn-outline-secondary btn-sm text-light px-3 py-2 floor-tab" data-floor="5">Floor 5</button>
+                </div>
+            </div>
+
+            <!-- Floor Blueprint Box -->
+            <div class="mall-card p-4">
+                <div class="d-flex justify-content-between align-items-center pb-3 border-bottom border-secondary border-opacity-25 mb-4">
+                    <div>
+                        <span id="mapFloorBadge" class="badge bg-warning text-dark font-mono fw-bold">LEVEL 1: ATRIUM</span>
+                        <h4 id="mapFloorTitle" class="text-white font-serif fw-bold mt-2 mb-0">Haute Couture &amp; Fine Horology Salon</h4>
+                        <p id="mapFloorDesc" class="text-secondary small mt-1 mb-0">Grand marble atrium housing world-renowned fashion flagships, Swiss fine watch salons, and premier concierge services.</p>
+                    </div>
+                    <div id="mapFloorLocation" class="text-secondary small font-mono">
+                        <i class="bi bi-geo-alt-fill text-warning me-1"></i> Level 1 Main Concourse &bull; Escalator &amp; Elevator Access
+                    </div>
+                </div>
+
+                <!-- Interactive Units Grid (Updated dynamically when Floor 1, 2, 3, 4, 5 is clicked) -->
+                <div class="row g-3 text-center" id="mapUnitsGrid">
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-warning bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('101', 'Zara Premier Outlet', 'Fashion & Apparel', 1)">
+                            <span class="text-warning font-mono small d-block">Unit #101</span>
+                            <strong class="text-white small d-block mt-1">Zara Flagship</strong>
+                            <small class="text-success font-mono" style="font-size: 0.65rem;">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-secondary bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('105', 'Gucci Flagship Boutique', 'Luxury Leather', 1)">
+                            <span class="text-warning font-mono small d-block">Unit #105</span>
+                            <strong class="text-white small d-block mt-1">Gucci Boutique</strong>
+                            <small class="text-success font-mono" style="font-size: 0.65rem;">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-secondary bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('108', 'Rolex & Fine Horology', 'Swiss Watches', 1)">
+                            <span class="text-warning font-mono small d-block">Unit #108</span>
+                            <strong class="text-white small d-block mt-1">Rolex Horology</strong>
+                            <small class="text-success font-mono" style="font-size: 0.65rem;">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-secondary bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('112', 'Sephora Beauty Lounge', 'Cosmetics', 1)">
+                            <span class="text-warning font-mono small d-block">Unit #112</span>
+                            <strong class="text-white small d-block mt-1">Sephora Lounge</strong>
+                            <small class="text-success font-mono" style="font-size: 0.65rem;">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-secondary bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('118', 'Artisan Roast Espresso', 'Café & Bakery', 1)">
+                            <span class="text-warning font-mono small d-block">Unit #118</span>
+                            <strong class="text-white small d-block mt-1">Artisan Coffee</strong>
+                            <small class="text-success font-mono" style="font-size: 0.65rem;">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <div class="p-3 rounded-3 border border-primary bg-dark h-100" style="cursor: pointer;" onclick="highlightMapUnit('120', 'Central Concierge Desk', 'Guest Services', 1)">
+                            <span class="text-primary font-mono small d-block">Unit #120</span>
+                            <strong class="text-white small d-block mt-1">Concierge Desk</strong>
+                            <small class="text-primary font-mono" style="font-size: 0.65rem;">Guest Care</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Highlight Details Strip -->
+                <div class="mt-4 p-3 rounded-3 bg-dark border border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="px-3 py-2 rounded bg-warning bg-opacity-25 text-warning font-mono fw-bold fs-5" id="unitDetailCode">#101</div>
+                        <div>
+                            <strong class="text-white d-block" id="unitDetailName">Zara Premier Outlet</strong>
+                            <small class="text-secondary" id="unitDetailDesc">Level 1 East Promenade &bull; Category: Fashion &amp; Apparel &bull; Status: Active</small>
+                        </div>
+                    </div>
+                    <a th:href="@{/login}" class="btn btn-outline-warning btn-sm text-uppercase fw-semibold" style="font-size: 0.72rem;">
+                        <i class="bi bi-shield-check me-1"></i> Staff / Officer Inspection View
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. GOURMET SKYLINE DINING -->
+    <section id="dining" class="py-5" style="background-color: #040814; border-top: 1px solid rgba(255,255,255,0.06);">
+        <div class="container py-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-5">
+                <div>
+                    <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem; letter-spacing: 0.15em;">Culinary Excellence</span>
+                    <h2 class="font-serif fw-bold text-white mb-1">Skyline Dining &amp; Artisan Cafés</h2>
+                    <p class="text-secondary small mb-0">From Michelin-calibre tasting menus on the 5th-floor glasshouse terrace to world-class specialty espresso roasters.</p>
+                </div>
+                <div class="text-secondary small font-mono">
+                    <span class="badge bg-dark border border-secondary text-warning px-3 py-2">
+                        <i class="bi bi-clock-fill me-1"></i> Kitchens Open Until 11:00 PM
+                    </span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Dining 1: The Glasshouse Bistro -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 220px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="The Glasshouse Bistro" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s;">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                Level 5 &bull; Unit 501
+                            </span>
+                            <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-warning font-mono" style="font-size: 0.68rem;">
+                                <i class="bi bi-star-fill text-warning me-1"></i> Michelin Selected
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h4 class="font-serif fw-bold text-white mb-2">The Glasshouse Bistro</h4>
+                            <p class="text-secondary small flex-grow-1">Contemporary French and Mediterranean botanical cuisine under an open glass conservatory overlooking the Metropolis skyline.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-3 d-flex justify-content-between align-items-center font-mono small text-secondary">
+                                <span><i class="bi bi-clock me-1 text-gold"></i> 12:00 PM – 11:00 PM</span>
+                                <span class="text-gold fw-bold">$$$$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dining 2: Saffron Royale -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 220px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="Saffron Royale Cuisine" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s;">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                Level 5 &bull; Unit 508
+                            </span>
+                            <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-warning font-mono" style="font-size: 0.68rem;">
+                                <i class="bi bi-award-fill text-warning me-1"></i> Haute Cuisine
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h4 class="font-serif fw-bold text-white mb-2">Saffron Royale Gastronomy</h4>
+                            <p class="text-secondary small flex-grow-1">Regal Indian Awadhi banquet dining featuring clay tandoor delicacies, slow-cooked saffron biryanis, and live sitar music.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-3 d-flex justify-content-between align-items-center font-mono small text-secondary">
+                                <span><i class="bi bi-clock me-1 text-gold"></i> 01:00 PM – 11:30 PM</span>
+                                <span class="text-gold fw-bold">$$$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dining 3: Twilight Lounge -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 220px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80" alt="Twilight Lounge" class="w-100 h-100 object-fit-cover" style="transition: transform 0.5s;">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold fw-bold text-uppercase" style="font-size: 0.7rem;">
+                                Level 5 &bull; Unit 520
+                            </span>
+                            <span class="position-absolute bottom-0 end-0 m-3 badge bg-dark bg-opacity-75 text-warning font-mono" style="font-size: 0.68rem;">
+                                <i class="bi bi-cup-hot-fill text-warning me-1"></i> Craft Cocktails
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h4 class="font-serif fw-bold text-white mb-2">Twilight Sky Veranda</h4>
+                            <p class="text-secondary small flex-grow-1">Bespoke mixology lounge with panoramic outdoor terrace, artisanal small plates, rare single malts, and twilight sunsets.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-3 d-flex justify-content-between align-items-center font-mono small text-secondary">
+                                <span><i class="bi bi-clock me-1 text-gold"></i> 04:00 PM – 01:00 AM</span>
+                                <span class="text-gold fw-bold">$$$</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. UPCOMING EVENTS & CULTURAL CALENDAR -->
+    <section id="events" class="py-5" style="background-color: #080d18; border-top: 1px solid rgba(255,255,255,0.06);">
+        <div class="container py-4">
+            <div class="text-center max-w-2xl mx-auto mb-5">
+                <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem; letter-spacing: 0.15em;">Culture &amp; Entertainment</span>
+                <h2 class="font-serif fw-bold text-white mb-2">Upcoming Events &amp; Exhibitions</h2>
+                <p class="text-secondary small mb-0">Join exclusive runway previews, next-gen technology expos, and sensory tasting masterclasses.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Event 1: Fashion Week -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80" alt="Autumn Runway" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold font-mono fw-bold">
+                                OCT 12 – 14, 2026
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <span class="text-gold font-mono small mb-1"><i class="bi bi-geo-alt me-1"></i> Level 1 Central Atrium</span>
+                            <h4 class="font-serif fw-bold text-white mb-2">Haute Couture Autumn Runway</h4>
+                            <p class="text-secondary small flex-grow-1">Exclusive high-fashion showcase unveiling autumn and winter collections from international Milan &amp; Paris design houses.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-2 d-flex justify-content-between align-items-center font-mono small">
+                                <span class="text-secondary"><i class="bi bi-clock me-1 text-gold"></i> 07:00 PM – 09:30 PM</span>
+                                <span class="badge bg-dark border border-secondary text-light">VIP Access</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 2: Robotics Expo -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80" alt="Next-Gen Robotics" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold font-mono fw-bold">
+                                OCT 22 – 24, 2026
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <span class="text-gold font-mono small mb-1"><i class="bi bi-geo-alt me-1"></i> Level 2 Tech Concourse</span>
+                            <h4 class="font-serif fw-bold text-white mb-2">Next-Gen Robotics &amp; AI Expo</h4>
+                            <p class="text-secondary small flex-grow-1">Interactive consumer robotics, spatial computing headsets, electric hypercars preview, and virtual reality simulations.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-2 d-flex justify-content-between align-items-center font-mono small">
+                                <span class="text-secondary"><i class="bi bi-clock me-1 text-gold"></i> 11:00 AM – 08:00 PM</span>
+                                <span class="badge bg-dark border border-secondary text-light">Free Admission</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 3: Wine & Truffle Masterclass -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="mall-card h-100 overflow-hidden d-flex flex-column">
+                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                            <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80" alt="Wine and Truffle" class="w-100 h-100 object-fit-cover">
+                            <span class="position-absolute top-0 start-0 m-3 badge bg-gold font-mono fw-bold">
+                                EVERY FRIDAY EVENING
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <span class="text-gold font-mono small mb-1"><i class="bi bi-geo-alt me-1"></i> Level 5 Sky Deck Terrace</span>
+                            <h4 class="font-serif fw-bold text-white mb-2">Sommelier Wine &amp; Truffle Pairing</h4>
+                            <p class="text-secondary small flex-grow-1">Guided sensory tasting of rare vintage Bordeaux wines paired with black truffles and artisanal cheeses hosted by Master Sommeliers.</p>
+                            <div class="border-top border-secondary border-opacity-25 pt-3 mt-2 d-flex justify-content-between align-items-center font-mono small">
+                                <span class="text-secondary"><i class="bi bi-clock me-1 text-gold"></i> 06:30 PM – 08:30 PM</span>
+                                <span class="badge bg-dark border border-secondary text-light">Registration Req.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. EXCLUSIVE BOUTIQUE OFFERS & PRIVILEGES -->
+    <section id="offers" class="py-5" style="background-color: #040814; border-top: 1px solid rgba(255,255,255,0.06);">
+        <div class="container py-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-5">
+                <div>
+                    <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem; letter-spacing: 0.15em;">Seasonal Privileges</span>
+                    <h2 class="font-serif fw-bold text-white mb-1">Exclusive Boutique Offers</h2>
+                    <p class="text-secondary small mb-0">Present digital voucher codes at flagship checkout counters for private rewards and discounts.</p>
+                </div>
+                <div class="text-secondary small font-mono">
+                    <span class="badge bg-dark border border-secondary text-gold px-3 py-2">
+                        <i class="bi bi-shield-check me-1"></i> Verified Merchant Codes
+                    </span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Offer 1 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="text-secondary font-mono small d-block mb-1">VALID THRU OCT 31</span>
+                            <div class="font-serif fw-bold text-gold display-6 mb-2">20% OFF</div>
+                            <h5 class="text-white fw-bold mb-2">Autumn Fashion Week Special</h5>
+                            <p class="text-secondary small mb-3">Valid at Zara, Gucci, and European flagships on purchases over $150.</p>
+                        </div>
+                        <div class="p-2 bg-dark rounded-3 border border-secondary border-opacity-50 text-center font-mono text-warning fw-bold small">
+                            GALLERIA20
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offer 2 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="text-secondary font-mono small d-block mb-1">VALID THRU NOV 15</span>
+                            <div class="font-serif fw-bold text-gold display-6 mb-2">$50 BACK</div>
+                            <h5 class="text-white fw-bold mb-2">Tech Upgrade Voucher</h5>
+                            <p class="text-secondary small mb-3">Instant store gift voucher with any Mac, iPad, or Sony gaming console purchase.</p>
+                        </div>
+                        <div class="p-2 bg-dark rounded-3 border border-secondary border-opacity-50 text-center font-mono text-warning fw-bold small">
+                            APPLEVIP
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offer 3 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="text-secondary font-mono small d-block mb-1">MON – THU EVENINGS</span>
+                            <div class="font-serif fw-bold text-gold display-6 mb-2">15% OFF</div>
+                            <h5 class="text-white fw-bold mb-2">Sunset Dining Special</h5>
+                            <p class="text-secondary small mb-3">Twilight dinner reservation tasting menu at The Glasshouse Sky Bistro.</p>
+                        </div>
+                        <div class="p-2 bg-dark rounded-3 border border-secondary border-opacity-50 text-center font-mono text-warning fw-bold small">
+                            ROOFTOP15
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offer 4 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="text-secondary font-mono small d-block mb-1">WHILE STOCKS LAST</span>
+                            <div class="font-serif fw-bold text-gold display-6 mb-2">FREE GIFT</div>
+                            <h5 class="text-white fw-bold mb-2">Fragrance &amp; Glow Set</h5>
+                            <p class="text-secondary small mb-3">Complimentary deluxe miniature perfume kit with any $80 spend at Sephora.</p>
+                        </div>
+                        <div class="p-2 bg-dark rounded-3 border border-secondary border-opacity-50 text-center font-mono text-warning fw-bold small">
+                            BEAUTYGLOW
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. VISITOR AMENITIES & GUEST CARE -->
+    <section id="amenities" class="py-5" style="background-color: #080d18; border-top: 1px solid rgba(255,255,255,0.06);">
+        <span id="services"></span>
+        <div class="container py-4">
+            <div class="text-center max-w-2xl mx-auto mb-5">
+                <span class="text-gold text-uppercase fw-bold font-mono" style="font-size: 0.72rem; letter-spacing: 0.15em;">Guest Services</span>
+                <h2 class="font-serif fw-bold text-white mb-2">Curated Amenities &amp; Care</h2>
+                <p class="text-secondary small mb-0">Designed to ensure an effortless, world-class experience throughout your visit to Nexus Grand Galleria.</p>
+            </div>
+
+            <div class="row g-4 text-center">
+                <!-- Amenity 1 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column align-items-center">
+                        <div class="rounded-3 bg-dark p-3 text-gold fs-2 mb-3 border border-secondary border-opacity-25">
+                            <i class="bi bi-ev-front-fill"></i>
+                        </div>
+                        <h5 class="text-white fw-bold mb-2">Valet &amp; EV Charging</h5>
+                        <p class="text-secondary small mb-0">1,200 secure underground parking bays equipped with white-glove valet and Tesla 250kW Supercharger stations.</p>
+                    </div>
+                </div>
+
+                <!-- Amenity 2 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column align-items-center">
+                        <div class="rounded-3 bg-dark p-3 text-gold fs-2 mb-3 border border-secondary border-opacity-25">
+                            <i class="bi bi-gift-fill"></i>
+                        </div>
+                        <h5 class="text-white fw-bold mb-2">VIP Concierge &amp; Styling</h5>
+                        <p class="text-secondary small mb-0">Private personal shopping lounges, luggage storage, hands-free package delivery, and bespoke complimentary gift wrapping.</p>
+                    </div>
+                </div>
+
+                <!-- Amenity 3 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column align-items-center">
+                        <div class="rounded-3 bg-dark p-3 text-gold fs-2 mb-3 border border-secondary border-opacity-25">
+                            <i class="bi bi-wifi"></i>
+                        </div>
+                        <h5 class="text-white fw-bold mb-2">Gigabit Wi-Fi &amp; Desks</h5>
+                        <p class="text-secondary small mb-0">Seamless high-speed 1Gbps public wireless network with executive charging workspaces in quiet atrium lounges.</p>
+                    </div>
+                </div>
+
+                <!-- Amenity 4 -->
+                <div class="col-lg-3 col-sm-6">
+                    <div class="mall-card p-4 h-100 d-flex flex-column align-items-center">
+                        <div class="rounded-3 bg-dark p-3 text-gold fs-2 mb-3 border border-secondary border-opacity-25">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="text-white fw-bold mb-2">24/7 Safety &amp; Officers</h5>
+                        <p class="text-secondary small mb-0">Certified safety floor supervisors, medical first responders, lost-and-found registry, and multilingual guest assistance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. COMMERCIAL PORTAL GATEWAY BANNER -->
+    <section class="py-5">
+        <div class="container py-3">
+            <div class="rounded-4 p-4 p-md-5 border border-warning border-opacity-50" style="background: linear-gradient(135deg, rgba(69,26,3,0.5), #0f172a);">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <span class="text-gold font-mono text-uppercase fw-bold small"><i class="bi bi-shield-lock-fill me-1"></i> Management &amp; Merchant Operations</span>
+                        <h3 class="font-serif fw-bold text-white mt-2 mb-3">Institutional Mall Management Portal</h3>
+                        <p class="text-secondary small mb-4" style="max-width: 650px;">
+                            Are you a mall administrator, safety floor officer, or retail commercial tenant? Sign in with your assigned institutional credentials to access commercial lease ledgers, floor compliance inspections, and billing settlements.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2 text-secondary small font-mono">
+                            <span class="badge bg-dark border border-secondary text-light">admin / admin123</span>
+                            <span class="badge bg-dark border border-secondary text-light">officer1 / officer123</span>
+                            <span class="badge bg-dark border border-secondary text-light">tenant1 / tenant123</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                        <a th:href="@{/login}" class="btn bg-gold btn-lg fw-bold px-4 py-3 rounded-3 text-uppercase shadow-lg" style="font-size: 0.85rem;">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Access Portal (/login)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. LUXURY FOOTER -->
+    <footer class="border-top border-secondary border-opacity-25 pt-5 pb-4" style="background-color: #020617;">
+        <div class="container">
+            <div class="row g-4 pb-4 border-bottom border-secondary border-opacity-25">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-buildings-fill text-warning fs-4"></i>
+                        <span class="font-serif fw-bold text-white fs-5" th:text="${mall != null ? mall.mallName : 'NEXUS GRAND GALLERIA'}">NEXUS GRAND GALLERIA</span>
+                    </div>
+                    <p class="text-secondary small">
+                        Metropolis City's premier lifestyle, fashion, and culinary landmark. 60 international boutiques across 5 architectural levels.
+                    </p>
+                    <div class="text-secondary small font-mono">
+                        <p class="mb-1"><i class="bi bi-geo-alt text-warning me-1"></i> 100 Galleria Boulevard, Metropolis City</p>
+                        <p class="mb-1"><i class="bi bi-telephone text-warning me-1"></i> Concierge: +1 (555) 700-MALL</p>
+                        <p class="mb-0"><i class="bi bi-envelope text-warning me-1"></i> guestservices@nexusmall.com</p>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="text-white text-uppercase font-mono small fw-bold mb-3">Directory</h6>
+                    <ul class="list-unstyled small text-secondary">
+                        <li class="mb-2"><a href="#directory" class="text-secondary text-decoration-none hover-white">Stores &amp; Brands</a></li>
+                        <li class="mb-2"><a href="#dining" class="text-secondary text-decoration-none hover-white">Skyline Dining</a></li>
+                        <li class="mb-2"><a href="#map" class="text-secondary text-decoration-none hover-white">Floor Map</a></li>
+                        <li class="mb-2"><a href="#offers" class="text-secondary text-decoration-none hover-white">Seasonal Privileges</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <h6 class="text-white text-uppercase font-mono small fw-bold mb-3">Portals</h6>
+                    <ul class="list-unstyled small text-secondary">
+                        <li class="mb-2"><a th:href="@{/login}" class="text-warning text-decoration-none fw-semibold"><i class="bi bi-lock me-1"></i> Portal Sign In</a></li>
+                        <li class="mb-2"><a th:href="@{/admin/dashboard}" class="text-secondary text-decoration-none">Executive Admin</a></li>
+                        <li class="mb-2"><a th:href="@{/officer/dashboard}" class="text-secondary text-decoration-none">Floor Inspections</a></li>
+                        <li class="mb-2"><a th:href="@{/tenant/dashboard}" class="text-secondary text-decoration-none">Tenant Statements</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-white text-uppercase font-mono small fw-bold mb-3">Galleria Gazette</h6>
+                    <p class="text-secondary small mb-2">Subscribe for private invitations to runway previews and culinary tastings.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Your email...">
+                        <button class="btn bg-gold btn-sm fw-bold" type="button">Join</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 d-flex flex-wrap justify-content-between align-items-center text-secondary font-mono" style="font-size: 0.72rem;">
+                <div>&copy; 2026 Nexus Grand Galleria Mall Management System. BCA Final-Year Project.</div>
+                <div>Spring Boot 3.2.5 &bull; Spring Security 6 &bull; Thymeleaf &bull; MySQL / H2</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Client-Side Scripts with Cache Buster -->
+    <script th:src="@{/js/main.js(v='1.1')}" src="/js/main.js?v=1.1"></script>
+
+    <!-- Interactive Client Script (Real-time Store Search & Category Filter) -->
+    <script>
+        // Real-time store search
+        const searchInput = document.getElementById('storeSearchInput');
+        const storeCards = document.querySelectorAll('.store-card-item');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase().trim();
+                storeCards.forEach(card => {
+                    const name = card.getAttribute('data-name');
+                    if (name && name.includes(term)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Category filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const cat = this.getAttribute('data-filter');
+                storeCards.forEach(card => {
+                    const cardCat = card.getAttribute('data-category');
+                    if (cat === 'all' || cardCat === cat) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

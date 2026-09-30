@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# ----------------------------------------------------------------------------
+# Maven Wrapper Shell Startup Script
+# ----------------------------------------------------------------------------
+if command -v mvn >/dev/null 2>&1; then
+  exec mvn "$@"
+fi
+echo "[Maven Wrapper] Apache Maven not detected on PATH."
+echo "Please ensure Maven (or Java 17+) is installed."
+exec mvn "$@"

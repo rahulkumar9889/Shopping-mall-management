@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Floor Officer Portal')}">
+    <title>Officer Dashboard - Shopping Mall Management System</title>
+</head>
+<body class="bg-light">
+
+    <nav th:replace="~{layout/base :: navbar}"></nav>
+
+    <main class="container-fluid px-lg-5 py-4">
+
+        <!-- Officer Header -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between pb-3 mb-4 border-bottom gap-2">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h2 class="h3 fw-bold text-dark mb-0">Floor Supervisory Portal</h2>
+                    <span class="badge bg-primary px-3 py-2 fs-6">
+                        <i class="bi bi-layers-fill me-1"></i> Assigned: Floor <span th:text="${officer.assignedFloor}">2</span>
+                    </span>
+                </div>
+                <p class="text-muted mb-0">
+                    Officer: <strong class="text-dark" th:text="${officer.user.fullName}">Marcus Sterling</strong> &bull; 
+                    Dept: <span th:text="${officer.department}">Operations & Safety</span> &bull; 
+                    Direct Line: <span th:text="${officer.phone}">+1 (555) 234-8901</span>
+                </p>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-primary" onclick="alert('Inspection checkpoint logged successfully for Floor ' + document.getElementById('floorNum').innerText)">
+                    <i class="bi bi-clipboard2-check me-1"></i> Log Floor Walk Check
+                </button>
+                <span id="floorNum" class="d-none" th:text="${officer.assignedFloor}">2</span>
+            </div>
+        </div>
+
+        <!-- Notification Message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}">Inspection record submitted.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4">
+            
+            <!-- Active Tenants on This Floor -->
+            <div class="col-lg-8">
+                <div class="card-panel">
+                    <div class="card-panel-header">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">
+                                Active Tenants &amp; Stores on Floor <span th:text="${officer.assignedFloor}">2</span>
+                            </h5>
+                            <small class="text-muted">Tenants subject to daily safety inspections and operational audits</small>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1" th:text="${floorTenants.size() + ' Active Stores'}">
+                            1 Active Store
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Unit #</th>
+                                    <th>Business / Brand</th>
+                                    <th>Category</th>
+                                    <th>Store Manager</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Inspection Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tenant : ${floorTenants}">
+                                    <td>
+                                        <span class="badge bg-dark-subtle text-dark font-monospace fw-bold" th:text="${tenant.shopNumber}">Shop 204</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${tenant.businessName}">Apple Authorized Reseller</div>
+                                        <small class="text-muted" th:text="${tenant.user.email}">support@applepremium.com</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-secondary border" th:text="${tenant.category}">Electronics</span>
+                                    </td>
+                                    <td th:text="${tenant.user.fullName}">David Chen</td>
+                                    <td>
+                                        <span th:if="${tenant.status != null and tenant.status.name() == 'ACTIVE'}" class="badge-status-active">ACTIVE</span>
+                                        <span th:if="${tenant.status != null and tenant.status.name() == 'INACTIVE'}" class="badge-status-inactive">INACTIVE</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-shield-check me-1"></i> Fire & Safety Pass
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(floorTenants)}">
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-building-slash fs-2 d-block mb-2"></i>
+                                        No active tenant units are currently registered on Floor <span th:text="${officer.assignedFloor}">2</span>.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floor Operations & Safety Checklist -->
+            <div class="col-lg-4">
+                <div class="card-panel mb-4">
+                    <div class="card-panel-header">
+                        <h5 class="fw-bold mb-0 text-dark">Daily Protocol Checklist</h5>
+                        <span class="badge bg-info-subtle text-info border">Floor Protocol</span>
+                    </div>
+                    <div class="p-3">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="chk1" checked>
+                            <label class="form-check-label small fw-semibold text-dark" for="chk1">
+                                Emergency Exit Corridors Free of Obstructions
+                            </label>
+                            <small class="d-block text-muted">Verified clear pathway to Stairwell B &amp; C</small>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="chk2" checked>
+                            <label class="form-check-label small fw-semibold text-dark" for="chk2">
+                                Fire Extinguisher Pressure Gauges Verified
+                            </label>
+                            <small class="d-block text-muted">All 6 CO2 units in operational green zone</small>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="chk3" checked>
+                            <label class="form-check-label small fw-semibold text-dark" for="chk3">
+                                Escalator &amp; Elevator Operation Normal
+                            </label>
+                            <small class="d-block text-muted">Sensors and emergency stop switches responsive</small>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chk4">
+                            <label class="form-check-label small fw-semibold text-dark" for="chk4">
+                                Evening Store Lock-Down Confirmation
+                            </label>
+                            <small class="d-block text-muted">Scheduled after 10:00 PM mall close</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact Card -->
+                <div class="card-panel bg-primary text-white p-4">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <i class="bi bi-shield-fill-exclamation fs-1 text-warning"></i>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-white">Central Security Dispatch</h6>
+                            <small class="text-white-50">Mall Command &amp; Control Room</small>
+                        </div>
+                    </div>
+                    <p class="small text-white-50 mb-3">
+                        For immediate escalations, spill containment, or power interruptions on Floor <span th:text="${officer.assignedFloor}">2</span>:
+                    </p>
+                    <div class="bg-white bg-opacity-10 p-2 rounded text-center font-monospace fw-bold">
+                        Internal Ext: #4400 / Direct: +1 (555) 999-MALL
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer th:replace="~{layout/base :: footer}"></footer>
+
+</body>
+</html>
